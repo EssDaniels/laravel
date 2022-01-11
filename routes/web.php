@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('template');
 });
 
 Route::get('/doctors/create', 'App\Http\Controllers\DoctorController@create'); // /doctors/create -  to ścieżka, DoctorController to kontroler i @nazwafunkcji
@@ -36,9 +36,9 @@ Route::post('/visits', 'App\Http\Controllers\VisitController@store');
 
 Route::get('/patients', 'App\Http\Controllers\PatientController@index');
 
-Route::get('/patients/create', 'App\Http\Controllers\PatientController@create');
+Route::get('/patients/create', 'App\Http\Controllers\PatientController@create')->middleware('auth');
 Route::post('/patients', 'App\Http\Controllers\PatientController@store');
-Route::get('/patients/{id}', 'App\Http\Controllers\PatientController@show');
+Route::get('/patients/{id}', 'App\Http\Controllers\PatientController@show')->middleware('auth');
 
 Auth::routes();
 

@@ -8,11 +8,30 @@ use App\Models\Specialization;
 use Illuminate\Support\Facades\Hash;
 use App\Repositories\UserRepository;
 
+use Illuminate\Support\Facades\Auth;
+
 class DoctorController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
+    public function userLogin()
+    {
+        if (Auth::user()->type != 'doctor' && Auth::user()->type != 'admin') {
+            return redirect()->route('login');
+        }
+    }
+
 
     public function index(UserRepository $userRepo)
     {
+        if (Auth::user()->type != 'doctor' && Auth::user()->type != 'admin') {
+            return redirect()->route('login');
+        }
+
+
         $statistis = $userRepo->getDoctorStatistics();
 
         $users = $userRepo->getAllDoctores();
@@ -25,6 +44,9 @@ class DoctorController extends Controller
     }
     public function listBySpecialization(UserRepository $userRepo, $id)
     {
+        if (Auth::user()->type != 'doctor' && Auth::user()->type != 'admin') {
+            return redirect()->route('login');
+        }
         $statistis = $userRepo->getDoctorStatistics();
 
         $users = $userRepo->getDoctorBySpecialization($id);
@@ -37,6 +59,9 @@ class DoctorController extends Controller
     }
     public function show(UserRepository $userRepo, $id)
     {
+        if (Auth::user()->type != 'doctor' && Auth::user()->type != 'admin') {
+            return redirect()->route('login');
+        }
         $doctor = $userRepo->find($id);
         return view('doctors.show', ["doctor" => $doctor, 'footerYear' => date('Y')]); //doctors - nazwa folderu, list- nazwa pliku blade.php 
 
@@ -46,6 +71,9 @@ class DoctorController extends Controller
 
     public function edit(UserRepository $userRepo, $id)
     {
+        if (Auth::user()->type != 'doctor' && Auth::user()->type != 'admin') {
+            return redirect()->route('login');
+        }
         $doctor = $userRepo->find($id);
         $specializations = Specialization::all();
         return view('doctors.edit', ['specializations' => $specializations, "doctor" => $doctor, 'footerYear' => date('Y')]);
@@ -53,12 +81,18 @@ class DoctorController extends Controller
 
     public function create()
     {
+        if (Auth::user()->type != 'doctor' && Auth::user()->type != 'admin') {
+            return redirect()->route('login');
+        }
         $specializations = Specialization::all();
         return view('doctors.create', ['specializations' => $specializations, 'footerYear' => date('Y')]);
     }
 
     public function store(Request $request)
     {
+        if (Auth::user()->type != 'doctor' && Auth::user()->type != 'admin') {
+            return redirect()->route('login');
+        }
         $request->validate([            //validacja : reszta w dokumentacji laravel
             'name' => 'required|max:255',
             'email' => 'required|email|unique:users,email',
@@ -84,6 +118,9 @@ class DoctorController extends Controller
     }
     public function editStore(Request $request)
     {
+        if (Auth::user()->type != 'doctor' && Auth::user()->type != 'admin') {
+            return redirect()->route('login');
+        }
         $doctor = User::find($request->input('id'));
         $doctor->name = $request->input('name');
         $doctor->lastname = $request->input('surname');
@@ -100,6 +137,9 @@ class DoctorController extends Controller
     }
     public function delete(UserRepository $userRepo, $id)
     {
+        if (Auth::user()->type != 'doctor' && Auth::user()->type != 'admin') {
+            return redirect()->route('login');
+        }
         $userRepo->delete($id);
         return redirect('doctors');
     }
